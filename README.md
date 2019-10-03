@@ -1,4 +1,4 @@
-![DAFramework Logo](https://github.com/OswinGuai/DAFramework/logo.jpg)
+![DAFramework Logo](https://github.com/OswinGuai/DAFramework/blob/master/logo.jpg)
 
 --------------------------------------------------------------------------------
 
