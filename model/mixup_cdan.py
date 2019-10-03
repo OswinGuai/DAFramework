@@ -4,6 +4,7 @@ import torch.nn as nn
 from torch.nn.functional import log_softmax
 
 from model.cdan import CDAN
+from modules.layer.mixup import mixup_4d
 from modules.loss.vat import EVAT2
 from modules.layer.grl import grl_hook
 
@@ -14,15 +15,6 @@ class MixupCDAN(CDAN):
 
         self.loss_sum = (alpha + beta + gamma + 1 + 1) / 3
         self.T = 0.5
-
-    def mixup_4d(self, x, l, beta=0.75):
-        assert x.shape[0] == l.shape[0]
-        mix = torch.distributions.Beta(beta, beta).sample((x.shape[0], )).to(x.device).view(-1, 1, 1, 1)
-        mix = torch.max(mix, 1 - mix)
-        perm = torch.randperm(x.shape[0])
-        xmix = x * mix + x[perm] * (1 - mix)
-        lmix = l * mix[..., 0, 0] + l[perm] * (1 - mix[..., 0, 0])
-        return xmix, lmix
 
     def get_loss(self, src_inputs, src_labels, tgt_inputs, iter_num, writer):
         total_loss = 0
@@ -66,8 +58,8 @@ class MixupCDAN(CDAN):
         total_loss += ori_transfer_loss / self.loss_sum
         # Mixup
         with torch.no_grad():
-            src_mix_inputs, src_mix_4d_softlabels = self.mixup_4d(src_inputs, src_softmax_outputs, beta=0.75)
-            tgt_mix_inputs, tgt_mix_4d_softlabels = self.mixup_4d(tgt_inputs, tgt_softmax_outputs, beta=0.75)
+            src_mix_inputs, src_mix_4d_softlabels = mixup_4d(src_inputs, src_softmax_outputs, beta=0.75)
+            tgt_mix_inputs, tgt_mix_4d_softlabels = mixup_4d(tgt_inputs, tgt_softmax_outputs, beta=0.75)
 
         src_d_mix_features = self.g_net(src_mix_inputs)
         tgt_d_mix_features = self.g_net(tgt_mix_inputs)

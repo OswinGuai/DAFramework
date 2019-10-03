@@ -4,6 +4,7 @@ import torch.nn.init as init
 from torch.nn.modules.batchnorm import BatchNorm1d
 from torchvision import models
 
+from modules.layer.grl import GradientReverseLayer
 from utils.initializer import *
 
 
@@ -52,50 +53,6 @@ class ResNet50(nn.Module):
             parameter_list = [
                     {"params":self.feature_layers.parameters(), "lr_mult":1, 'decay_mult':2},
                     {"params":self.bottleneck.parameters(), "lr_mult":10, 'decay_mult':2}, 
-                    ]
-        else:
-            parameter_list = [
-                    {"params":self.feature_layers.parameters(), "lr_mult":1, 'decay_mult':2},
-                    ]
-        return parameter_list
-
-
-class ResNet50FC(nn.Module):
-    def __init__(self, class_num=1000, bottleneck_dim=256):
-        super(ResNet50FC, self).__init__()
-        ## set base network
-        model_resnet50 = models.resnet50(pretrained=True)
-        self.conv1 = model_resnet50.conv1
-        self.bn1 = model_resnet50.bn1
-        self.relu = model_resnet50.relu
-        self.maxpool = model_resnet50.maxpool
-        self.layer1 = model_resnet50.layer1
-        self.layer2 = model_resnet50.layer2
-        self.layer3 = model_resnet50.layer3
-        self.layer4 = model_resnet50.layer4
-        self.avgpool = model_resnet50.avgpool
-        self.feature_layers = nn.Sequential(self.conv1, self.bn1, self.relu, self.maxpool, self.layer1, self.layer2, self.layer3, self.layer4, self.avgpool)
-        self.classifier_layer_1 = nn.Linear(feature_dim, class_num)
-        self.high_dim = bottleneck_dim
-        self.bottleneck = nn.Linear(model_resnet50.fc.in_features, bottleneck_dim)
-        self.bottleneck.apply(init_weights)
-        self.classifier_layer_1.apply(init_weights)
-
-    def forward(self, x):
-        x = self.feature_layers(x)
-        high_features = x.view(x.size(0), -1)
-        high_features = self.bottleneck(high_features)
-        return high_features, self.classifier_layer_1(high_features)
-
-    def output_dim(self):
-        return self.high_dim
-
-    def get_parameters(self):
-        if self.use_bottleneck:
-            parameter_list = [
-                    {"params":self.feature_layers.parameters(), "lr_mult":1, 'decay_mult':2},
-                    {"params":self.bottleneck.parameters(), "lr_mult":10, 'decay_mult':2}, 
-                    {"params":self.classifier_layer_1.parameters(), "lr_mult":10, 'decay_mult':2}, 
                     ]
         else:
             parameter_list = [
@@ -217,3 +174,48 @@ class WideResNet(nn.Module):
 
     def output_dim(self):
         return self.high_dim
+
+
+class MDDNet(nn.Module):
+    def __init__(self, bottleneck_dim=1024, width=1024, class_num=31):
+        super(MDDNet, self).__init__()
+        ## set base network
+        self.base_network = ResNet50()
+        self.bottleneck_layer_list = [nn.Linear(self.base_network.output_dim(), bottleneck_dim),
+                                      nn.BatchNorm1d(bottleneck_dim), nn.ReLU(), nn.Dropout(0.5)]
+        self.bottleneck_layer = nn.Sequential(*self.bottleneck_layer_list)
+        self.classifier_layer_list = [nn.Linear(bottleneck_dim, width), nn.ReLU(), nn.Dropout(0.5),
+                                      nn.Linear(width, class_num)]
+        self.classifier_layer = nn.Sequential(*self.classifier_layer_list)
+        self.classifier_layer_2_list = [nn.Linear(bottleneck_dim, width), nn.ReLU(), nn.Dropout(0.5),
+                                        nn.Linear(width, class_num)]
+        self.classifier_layer_2 = nn.Sequential(*self.classifier_layer_2_list)
+        self.softmax = nn.Softmax(dim=1)
+
+        ## initialization
+        self.bottleneck_layer[0].weight.data.normal_(0, 0.005)
+        self.bottleneck_layer[0].bias.data.fill_(0.1)
+        for dep in range(2):
+            self.classifier_layer_2[dep * 3].weight.data.normal_(0, 0.01)
+            self.classifier_layer_2[dep * 3].bias.data.fill_(0.0)
+            self.classifier_layer[dep * 3].weight.data.normal_(0, 0.01)
+            self.classifier_layer[dep * 3].bias.data.fill_(0.0)
+
+        ## collect parameters
+        self.parameter_list = [
+            {"params": self.base_network.parameters(), "lr_mult": 1.0, 'decay_mult': 2},
+            {"params": self.bottleneck_layer.parameters(), "lr_mult": 10, 'decay_mult': 2},
+            {"params": self.classifier_layer.parameters(), "lr_mult": 10, 'decay_mult': 2},
+            {"params": self.classifier_layer_2.parameters(), "lr_mult": 10, 'decay_mult': 2},
+        ]
+
+    def forward(self, inputs, iter_num):
+        grl_layer = GradientReverseLayer(iter_num)
+        features = self.base_network(inputs)
+        features_adv = grl_layer(features)
+        outputs_adv = self.classifier_layer_2(features_adv)
+
+        outputs = self.classifier_layer(features)
+        softmax_outputs = self.softmax(outputs)
+
+        return features, outputs, softmax_outputs, outputs_adv

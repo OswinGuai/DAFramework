@@ -1,7 +1,6 @@
 import math
 
-from model.mdd import GradientReverseLayer
-from modules.layer.grl import grl_hook
+from modules.layer.grl import grl_hook, GradientReverseLayer
 from utils.initializer import *
 
 
