@@ -2,12 +2,12 @@
 
 --------------------------------------------------------------------------------
 
-DAFramework is a PyTorch programming framework for **Domain Adaptation** approaches.
+***DAFramework*** is a PyTorch programming framework for **Domain Adaptation** approaches.
 It provides two high-level features:
 - Feature One
 - Feature Two
 
-Readme Guide
+## README Guide
 - [Installation](#installation)
 - [Getting Started](#getting-started)
 - [Author](#Author)
