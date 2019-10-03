@@ -1,0 +1,11 @@
+torch
+torchvision
+tensorboardX
+numpy
+scikit-learn
+certifi==2018.8.13
+Pillow==5.2.0
+protobuf==3.6.1
+PyYAML==3.13
+scipy==1.1.0
+six==1.11.0
