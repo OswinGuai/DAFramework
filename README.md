@@ -2,13 +2,13 @@
 
 --------------------------------------------------------------------------------
 
-DAFramework is a Python package that provides two high-level features:
+DAFramework is a PyTorch programming framework for **Domain Adaptation** approaches.
+It provides two high-level features:
 - 
 - 
 
 - [Installation](#installation)
 - [Getting Started](#getting-started)
-- [Communication](#communication)
 - [Author](#Author)
 
 ## Installation
@@ -19,13 +19,14 @@ DAFramework is a Python package that provides two high-level features:
 Three pointers to get you started:
 - [Tutorials of PyTorch](https://pytorch.org/tutorials/)
 - [Paper List of Related Domain Adaptation Approaches]()
-- [Example]()
+- [Examples](https://github.com/OswinGuai/DAFramework/tree/master/example)
 
 
 ## Author
 
 
 DAFramework is developed and currently maintained by [Zhongyi Pei](https://github.com/OswinGuai/).
+
 Email: peizhyi@gmail.com
 
 
