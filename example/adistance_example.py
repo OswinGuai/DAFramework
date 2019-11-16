@@ -4,10 +4,10 @@ from torch import optim
 from data.dataloader import load_images
 from model.adistance import ADis
 from utils.lr_scheduler import INVScheduler
-from utils.randomness import set_randomness, worker_init_fn
+from utils.randomness import set_randomness, gen_init_fn
 from utils.trainer import train_da_evaluator
-from .datasets import *
-from .opts import read_config
+from dataset_info import *
+from opts import read_config
 
 args = read_config()
 GLOBAL_SEED = args.seed

@@ -9,18 +9,6 @@ src=$4
 tgt=$5
 tgttest=${tgt}
 
-#prefix=/data/office-home/images
-#dataset=officehome
-#src=Art
-#tgt=Product
-#tgttest=${tgt}
-
-#prefix=/
-#dataset=domainnet
-#src=infograph
-#tgt=real
-#tgttest=${tgt}-test
-
 lr=0.0005
 alpha=1
 beta=10

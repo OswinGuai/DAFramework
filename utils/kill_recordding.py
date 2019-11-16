@@ -33,7 +33,7 @@ def kill_by_task_id(tag, id, rm):
         if rm == 'f':
             os.remove(task_file)
             #os.remove(vis_file)
-    except FileNotFoundError:
+    except IOError:
         print('%s not Found. Ignore.' % task_file)
         return
     print('following pid is being killed...')

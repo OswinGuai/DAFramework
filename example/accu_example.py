@@ -2,10 +2,10 @@ import torch
 from tensorboardX import SummaryWriter
 
 from data.dataloader import load_images
-from utils.randomness import set_randomness, worker_init_fn
+from utils.randomness import set_randomness, gen_init_fn
 from utils.evaluator import evaluate_classification_perclass
-from .datasets import *
-from .opts import read_config
+from dataset_info import *
+from opts import read_config
 
 args = read_config()
 GLOBAL_SEED = args.seed
@@ -20,7 +20,7 @@ def main():
     target_dataset = datasets[args.tgt]
     train_target_file_path = target_dataset
     batch_size = 16
-    train_target_loader = load_images(train_target_file_path, batch_size=batch_size, resize_size=256, is_train=True, crop_size=224, worker_init=worker_init_fn, prefix=args.prefix)
+    train_target_loader = load_images(train_target_file_path, batch_size=batch_size, resize_size=256, is_train=True, crop_size=224, worker_init=gen_init_fn(GLOBAL_SEED), prefix=args.prefix)
     writer = SummaryWriter('%s/%s' % (args.logdir, args.key))
     # Init model
     target_model = torch.load(args.saved_model)
