@@ -22,8 +22,8 @@ def main():
     train_target_file_path = datasets[args.tgt]
     train_source_file_path = datasets[args.src]
     batch_size = 16
-    train_source_loader = load_images(train_source_file_path, batch_size=batch_size, resize_size=256, is_train=True, crop_size=224, worker_init=worker_init_fn, prefix=args.prefix)
-    train_target_loader = load_images(train_target_file_path, batch_size=batch_size, resize_size=256, is_train=True, crop_size=224, worker_init=worker_init_fn, prefix=args.prefix)
+    train_source_loader = load_images(train_source_file_path, batch_size=batch_size, resize_size=256, is_train=True, crop_size=224, worker_init=gen_init_fn(GLOBAL_SEED), prefix=args.prefix)
+    train_target_loader = load_images(train_target_file_path, batch_size=batch_size, resize_size=256, is_train=True, crop_size=224, worker_init=gen_init_fn(GLOBAL_SEED), prefix=args.prefix)
     
     writer = SummaryWriter('%s/%s' % (args.logdir, args.key))
     # Init model

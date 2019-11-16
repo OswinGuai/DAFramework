@@ -1,6 +1,5 @@
 
-model=ccc
-#version=stepback_1003
+model=$7
 version=$6
 gpu=$1
 
@@ -41,6 +40,6 @@ tag=${model}_${src}2${tgt}_${alpha}_${beta}_${gamma}
 vis_log=vis_log
 
 start=0
-sh scripts/run_once.sh ${version} ${gpu} ${src} ${tgt} ${tgttest} ${lr} ${alpha} ${beta} ${gamma} ${seed} ${tag} ${model} ${dataset} ${prefix} ${method} ${vis_log} ${resume} ${saved_model} ${start_iter}
+sh scripts/train/run_once.sh ${version} ${gpu} ${src} ${tgt} ${tgttest} ${lr} ${alpha} ${beta} ${gamma} ${seed} ${tag} ${model} ${dataset} ${prefix} ${method} ${vis_log} ${resume} ${saved_model} ${start_iter}
 start=$((start + 1))
 

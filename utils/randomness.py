@@ -10,6 +10,8 @@ def set_randomness(seed, deterministic=False, benchmark=False):
     torch.backends.cudnn.deterministic = deterministic
     torch.backends.cudnn.benchmark = benchmark
 
-def worker_init_fn(worker_id):
-    global GLOBAL_SEED
-    set_randomness(GLOBAL_SEED, deterministic=False, benchmark=False)
+def gen_init_fn(seed):
+    def worker_init_fn(worker_id):
+        set_randomness(seed, deterministic=False, benchmark=False)
+    return worker_init_fn
+

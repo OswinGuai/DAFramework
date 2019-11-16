@@ -4,7 +4,7 @@ from torch import nn
 from torch.autograd import Variable
 import torch.nn.functional as F
 
-from modules import EntropyLoss
+from modules.loss.general import EntropyLoss
 
 
 def _l2_normalize(d):

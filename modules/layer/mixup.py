@@ -1,7 +1,7 @@
 import torch
 
 
-def mixup_4d(self, x, l, beta=0.75):
+def mixup_4d(x, l, beta=0.75):
     assert x.shape[0] == l.shape[0]
     mix = torch.distributions.Beta(beta, beta).sample(
         (x.shape[0],)).to(x.device).view(-1, 1, 1, 1)

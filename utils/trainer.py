@@ -98,8 +98,7 @@ def train_da(model_instance, train_source_loader, train_target_loader, test_targ
 
 
 def train_da_batch(model_instance, inputs_source, labels_source, inputs_target, optimizer_list, iter_num, writer):
-    inputs = torch.cat((inputs_source, inputs_target), dim=0)
-    total_loss = model_instance.get_loss(inputs, labels_source, iter_num, writer)
+    total_loss = model_instance.get_loss(inputs_source, labels_source, inputs_target, iter_num, writer)
     if not (isinstance(total_loss, list) or isinstance(total_loss, tuple)): 
         total_loss = [total_loss]
     for l_i, item_loss in enumerate(total_loss):
