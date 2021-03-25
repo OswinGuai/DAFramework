@@ -6,6 +6,6 @@ scikit-learn
 certifi==2018.8.13
 Pillow==6.2.0
 protobuf==3.6.1
-PyYAML==5.1
+PyYAML==5.4
 scipy==1.1.0
 six==1.11.0
