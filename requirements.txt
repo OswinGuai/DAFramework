@@ -4,7 +4,7 @@ tensorboardX
 numpy
 scikit-learn
 certifi==2018.8.13
-Pillow==6.2.0
+Pillow==8.3.2
 protobuf==3.6.1
 PyYAML==5.1
 scipy==1.1.0
