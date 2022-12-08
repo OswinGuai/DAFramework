@@ -3,7 +3,7 @@ torchvision
 tensorboardX
 numpy
 scikit-learn
-certifi==2018.8.13
+certifi==2022.12.7
 Pillow==6.2.0
 protobuf==3.6.1
 PyYAML==5.1
